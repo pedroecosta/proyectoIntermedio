@@ -1,0 +1,45 @@
+{% extends "AppCoder/padre.html" %}
+
+{% load static %}
+{% block contenidoQueCambia %}
+
+    <!--Aquí va lo que cambia, y lo asociado a está vista :) -->
+    <h1>Deportes</h1>
+    <p>Aquí tenemos info de los deportes</p>
+    
+    {% if miFormularioDeporte.errors %}
+    <p style="color:red">Esta mal</p>
+    {% endif %}
+    <form action="" method="post">
+        {% csrf_token %}
+       <table>
+            {{ miFormularioDeporte.as_table }}
+       </table>
+        
+        <input type="submit" value="Enviar" />
+    </form>
+    
+    <h1>Busqueda de Comentarios:</h1>
+
+    <form action="/AppCoder/buscar" method="GET">
+        <input type="text" name="nombre" id="nombre">
+        <input type="submit" value="Buscar">
+    </form>
+    
+    <p>Estamos buscando el comentario de: {{nombre}}</p>
+    
+    {% if comentario %}
+    
+    <ul>
+    {% for Deportes in comentario %}
+        <li>{{Deportes.nombre}}</li>
+        <li>{{Deportes.comentario}}</li>
+    {% endfor %}
+    
+    </ul>
+    
+    {% endif %}
+
+
+
+{% endblock %}

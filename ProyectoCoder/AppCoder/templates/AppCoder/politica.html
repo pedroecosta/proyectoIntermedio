@@ -1,0 +1,22 @@
+{% extends "AppCoder/padre.html" %}
+
+{% load static %}
+{% block contenidoQueCambia %}
+
+    <!--Aquí va lo que cambia, y lo asociado a está vista :) -->
+    <h1>politica</h1>
+    <p>Aquí tenemos info de los politica</p>
+    
+    {% if miFormularioPolitica.errors %}
+    <p style="color:red">Esta mal</p>
+    {% endif %}
+    <form action="" method="post">
+        {% csrf_token %}
+       <table>
+            {{ miFormularioPolitica.as_table }}
+       </table>
+        
+        <input type="submit" value="Enviar" />
+    </form>
+    
+{% endblock %}

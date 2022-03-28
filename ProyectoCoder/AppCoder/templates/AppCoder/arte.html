@@ -1,0 +1,22 @@
+{% extends "AppCoder/padre.html" %}
+
+{% load static %}
+{% block contenidoQueCambia %}
+
+    <!--Aquí va lo que cambia, y lo asociado a está vista :) -->
+    <h1>Arte</h1>
+    <p>Aquí tenemos info de los Arte</p>
+    
+    {% if miFormularioArte.errors %}
+    <p style="color:red">Esta mal</p>
+    {% endif %}
+    <form action="" method="post">
+        {% csrf_token %}
+       <table>
+            {{ miFormularioArte.as_table }}
+       </table>
+        
+        <input type="submit" value="Enviar" />
+    </form>
+
+{% endblock %}
