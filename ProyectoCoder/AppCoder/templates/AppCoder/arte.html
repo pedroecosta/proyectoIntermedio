@@ -18,5 +18,26 @@
         
         <input type="submit" value="Enviar" />
     </form>
+    
+    <h1>Busqueda de Comentarios:</h1>
+
+    <form action="/AppCoder/buscarArte" method="GET">
+        <input type="text" name="nombre" id="nombre">
+        <input type="submit" value="Buscar">
+    </form>
+    
+    <p>Estamos buscando el comentario de: {{nombre}}</p>
+    
+    {% if comentario %}
+    
+    <ul>
+    {% for Arte in comentario %}
+        <li>{{Arte.nombre}}</li>
+        <li>{{Arte.comentario}}</li>
+    {% endfor %}
+    
+    </ul>
+    
+    {% endif %}
 
 {% endblock %}

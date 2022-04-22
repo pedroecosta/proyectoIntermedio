@@ -1,12 +1,51 @@
+import re
 from django.shortcuts import render, HttpResponse
 from django.http import HttpResponse
 from AppCoder.forms import comentarioFormulario, usuarioFormulario
 from AppCoder.models import Usuario, Politica, Deportes, Arte
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth import login, logout, authenticate
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from AppCoder.forms import UserRegisterForm, UserEditForm
+from django.contrib.auth.decorators import login_required
 
+#vista de registro
+def register(request):
 
-# Create your views here.
+      if request.method == "POST":
+            form = UserCreationForm(request.POST)
+            #form = UserRegisterForm(request.POST)
+            if form.is_valid():
+                  username = form.cleaned_data['username']
+                  form.save()
+            return render(request, 'AppCoder/inicio.html', {'mensaje':'Usuario Creado :)'})
+      else:
+            form = UserCreationForm()
+            #form = UserRegisterForm()
+      return render(request, 'AppCoder/registro.html', {'form':form})
+#vista de login 
+def login_request(request):
+      if request.method == 'POST':
+            form = AuthenticationForm(request, data = request.POST)
+            if form.is_valid():
+                   # Si pasó la validación de Django
+                  usuario = form.cleaned_data.get('username')
+                  contrasenia = form.cleaned_data.get('password')
+                  
+                  user = authenticate(username= usuario, password=contrasenia)
+                  if user is not None:
+                         login(request, user)
+                         return render(request, "AppCoder/inicio.html", {"mensaje":f"Bienvenido {usuario}"})
+                  else:
+                        return render(request, "AppCoder/inicio.html", {"mensaje":"Datos incorrectos"})
+            else:
+                 return render(request, "AppCoder/inicio.html", {"mensaje":"Formulario erroneo"})
+      form = AuthenticationForm()
+      return render(request, "AppCoder/login.html", {"form": form})
 
-
+@login_required
 def inicio(request):
 
       return render(request, "AppCoder/inicio.html")
@@ -31,9 +70,9 @@ def usuarios(request):
 
       else: 
 
-            miFormularioUsuario= usuarioFormulario() #Formulario vacio para construir el html
+           miFormularioUsuario= usuarioFormulario() #Formulario vacio para construir el html
 
-      return render(request, "AppCoder/usuarios.html", {"miFormularioUsuario":miFormularioUsuario})
+      return render(request, "AppCoder/usuarios.html", {"miFormularioUsuario":miFormularioUsuario})#
 
 def deportes(request):
 
@@ -108,10 +147,10 @@ def arte(request):
 
       return render(request, "AppCoder/arte.html", {"miFormularioArte":miFormularioArte})
 
-def busquedaComentario(request):
+def busquedaComentarioDeporte(request):
       return render(request,"AppCoder/deportes.html")
 
-def buscar(request):
+def buscarDeporte(request):
       
       if request.GET["nombre"]:
             nombre=request.GET['nombre']
@@ -120,3 +159,54 @@ def buscar(request):
       else:
             respuesta= "No enviaste datos"
       return HttpResponse(respuesta)
+
+def busquedaComentarioArte(request):
+      return render(request,"AppCoder/arte.html")
+
+def buscarArte(request):
+      
+      if request.GET["nombre"]:
+            nombre=request.GET['nombre']
+            comentario = Deportes.objects.filter(nombre__icontains=nombre)
+            return render(request,"AppCoder/arte.html", {"comentario":comentario, "nombre":nombre})
+      else:
+            respuesta= "No enviaste datos"
+      return HttpResponse(respuesta)
+
+def busquedaComentarioPolitica(request):
+      return render(request,"AppCoder/deportes.html")
+
+def buscarPolitica(request):
+      
+      if request.GET["nombre"]:
+            nombre=request.GET['nombre']
+            comentario = Deportes.objects.filter(nombre__icontains=nombre)
+            return render(request,"AppCoder/politica.html", {"comentario":comentario, "nombre":nombre})
+      else:
+            respuesta= "No enviaste datos"
+      return HttpResponse(respuesta)
+
+
+
+@login_required
+def editarPerfil(request):
+      usuario = request.user
+      if request.method == 'POST':
+            miFormulario = UserEditForm(request.POST)
+            if miFormulario.is_valid():
+                  informacion = miFormulario.cleaned_data
+
+                  usuario.email = informacion['email']
+                  usuario.password1 = informacion['password1']
+                  usuario.password2 = informacion['password2']
+                  usuario.last_name = informacion['last_name']
+                  usuario.first_name = informacion['first_name']
+
+                  usuario.save()
+
+            return render(request, "AppCoder/inicio.html")
+
+      else:
+            miFormulario = UserEditForm(initial={'email': usuario.email})
+            
+      return render(request, "AppCoder/editarPerfil.html", {"miFormulario": miFormulario, "usuario": usuario})
