@@ -50,6 +50,15 @@ def inicio(request):
 
       return render(request, "AppCoder/inicio.html")
 
+def contacto(request):
+
+      return render(request, "AppCoder/contacto.html")
+
+def ayuda(request):
+
+      return render(request, "AppCoder/ayuda.html")
+
+
 def usuarios(request):
 
       if request.method == 'POST':
